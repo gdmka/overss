@@ -131,8 +131,6 @@ Overss uses a `config.json` file for persistent configuration. It's automaticall
 - No internet exposure
 - Perfect for home network use
 
-**`start.bat`** - Windows version (local network only)
-
 ### Environment Setup for Remote Access
 
 **Local Network Access:**
@@ -239,7 +237,6 @@ go build -o overss
 
 # Build for different platforms
 GOOS=linux GOARCH=amd64 go build -o overss-linux
-GOOS=windows GOARCH=amd64 go build -o overss.exe
 GOOS=darwin GOARCH=arm64 go build -o overss-mac
 ```
 
