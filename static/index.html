@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overss - RSS Feed Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            font-size: 1em;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .feed-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .feed-url {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .feed-url input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: monospace;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .file-list {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .file-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .file-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 4px;
+        }
+
+        .file-meta {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            opacity: 0.9;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Overss</h1>
+            <p>RSS Feed Manager for Audiobooks</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('files')">📁 Files</button>
+            <button class="tab" onclick="switchTab('settings')">⚙️ Settings</button>
+            <button class="tab" onclick="switchTab('feed')">📡 Feed</button>
+        </div>
+
+        <div id="files-tab" class="tab-content active">
+            <div class="success-message" id="files-success"></div>
+            <div class="error-message" id="files-error"></div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-files">0</div>
+                    <div class="stat-label">Total Files</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="selected-files">0</div>
+                    <div class="stat-label">Selected Files</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-size">0 MB</div>
+                    <div class="stat-label">Total Size</div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="selectAll()">Select All</button>
+                <button class="btn btn-secondary" onclick="deselectAll()">Deselect All</button>
+                <button class="btn btn-primary" onclick="saveSelection()">Save Selection</button>
+                <button class="btn btn-secondary" onclick="loadFiles()">Refresh</button>
+            </div>
+
+            <div id="file-list-container" style="margin-top: 20px;">
+                <div class="loading">Loading files...</div>
+            </div>
+        </div>
+
+        <div id="settings-tab" class="tab-content">
+            <div class="success-message" id="settings-success"></div>
+            <div class="error-message" id="settings-error"></div>
+
+            <form id="settings-form">
+                <div class="form-group">
+                    <label>Feed Title</label>
+                    <input type="text" id="title" placeholder="My Audiobook Feed" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="description" rows="3" placeholder="Personal audiobook RSS feed"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Author Name</label>
+                    <input type="text" id="author" placeholder="Your Name">
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" placeholder="your@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Base URL</label>
+                    <input type="url" id="base_url" placeholder="http://localhost:8083" required>
+                    <small style="color: #6c757d; display: block; margin-top: 5px;">
+                        Use your public IP or domain if accessing from other devices
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label>Audio Directory</label>
+                    <input type="text" id="audio_dir" placeholder="./audiobooks" required>
+                    <small style="color: #6c757d; display: block; margin-top: 5px;">
+                        Path to your audiobook files (relative or absolute)
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label>Cover Image URL (Optional)</label>
+                    <input type="url" id="image_url" placeholder="https://example.com/cover.jpg">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+            </form>
+        </div>
+
+        <div id="feed-tab" class="tab-content">
+            <div class="feed-info">
+                <h3 style="margin-bottom: 15px;">📡 Your RSS Feed URL</h3>
+                <p style="margin-bottom: 10px; color: #6c757d;">
+                    Copy this URL and add it to Overcast or any podcast app:
+                </p>
+                <div class="feed-url">
+                    <input type="text" id="feed-url" readonly>
+                    <button class="btn btn-primary" onclick="copyFeedUrl()">Copy</button>
+                </div>
+            </div>
+
+            <div class="feed-info">
+                <h3 style="margin-bottom: 15px;">📖 How to Use</h3>
+                <ol style="line-height: 2; color: #495057; padding-left: 20px;">
+                    <li>Go to the <strong>Files</strong> tab and select audiobook files</li>
+                    <li>Click <strong>Save Selection</strong> to update your feed</li>
+                    <li>Copy the RSS feed URL above</li>
+                    <li>Open Overcast and add a new podcast by URL</li>
+                    <li>Paste your RSS feed URL</li>
+                    <li>Your audiobooks will appear as podcast episodes!</li>
+                </ol>
+            </div>
+
+            <div class="feed-info">
+                <h3 style="margin-bottom: 15px;">💡 Tips</h3>
+                <ul style="line-height: 2; color: #495057; padding-left: 20px;">
+                    <li>Make sure your server is accessible from your device</li>
+                    <li>Use a public IP or domain for remote access</li>
+                    <li>Supported formats: MP3, M4A, M4B, OGG, OPUS, FLAC, WAV, AAC</li>
+                    <li>Files are served directly from your storage</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let files = [];
+        let config = {};
+
+        // Load initial data
+        window.addEventListener('DOMContentLoaded', () => {
+            loadConfig();
+            loadFiles();
+        });
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        async function loadConfig() {
+            try {
+                const response = await fetch('/api/config');
+                config = await response.json();
+
+                document.getElementById('title').value = config.title || '';
+                document.getElementById('description').value = config.description || '';
+                document.getElementById('author').value = config.author || '';
+                document.getElementById('email').value = config.email || '';
+                document.getElementById('base_url').value = config.base_url || '';
+                document.getElementById('audio_dir').value = config.audio_dir || '';
+                document.getElementById('image_url').value = config.image_url || '';
+
+                updateFeedUrl();
+            } catch (error) {
+                console.error('Error loading config:', error);
+            }
+        }
+
+        async function loadFiles() {
+            try {
+                const response = await fetch('/api/files');
+                files = await response.json();
+
+                renderFiles();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading files:', error);
+                showError('files', 'Failed to load files');
+            }
+        }
+
+        function renderFiles() {
+            const container = document.getElementById('file-list-container');
+
+            if (!files || files.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <h3>No audiobook files found</h3>
+                        <p>Add some audio files to your audiobooks directory</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const fileList = document.createElement('div');
+            fileList.className = 'file-list';
+
+            files.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+
+                const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+                const date = new Date(file.mod_time).toLocaleDateString();
+
+                item.innerHTML = `
+                    <input type="checkbox" id="file-${index}" ${file.selected ? 'checked' : ''}
+                           onchange="toggleFile(${index})">
+                    <div class="file-info">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-meta">${file.path} • ${sizeInMB} MB • ${date}</div>
+                    </div>
+                `;
+
+                fileList.appendChild(item);
+            });
+
+            container.innerHTML = '';
+            container.appendChild(fileList);
+        }
+
+        function toggleFile(index) {
+            files[index].selected = !files[index].selected;
+            updateStats();
+        }
+
+        function selectAll() {
+            files.forEach(file => file.selected = true);
+            renderFiles();
+            updateStats();
+        }
+
+        function deselectAll() {
+            files.forEach(file => file.selected = false);
+            renderFiles();
+            updateStats();
+        }
+
+        function updateStats() {
+            const totalFiles = files.length;
+            const selectedFiles = files.filter(f => f.selected).length;
+            const totalSize = files.reduce((sum, f) => sum + f.size, 0) / (1024 * 1024);
+
+            document.getElementById('total-files').textContent = totalFiles;
+            document.getElementById('selected-files').textContent = selectedFiles;
+            document.getElementById('total-size').textContent = totalSize.toFixed(2) + ' MB';
+        }
+
+        async function saveSelection() {
+            const selectedPaths = files.filter(f => f.selected).map(f => f.path);
+
+            try {
+                const response = await fetch('/api/selection', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ files: selectedPaths })
+                });
+
+                if (response.ok) {
+                    showSuccess('files', 'Selection saved successfully!');
+                } else {
+                    showError('files', 'Failed to save selection');
+                }
+            } catch (error) {
+                console.error('Error saving selection:', error);
+                showError('files', 'Failed to save selection');
+            }
+        }
+
+        document.getElementById('settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const newConfig = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                author: document.getElementById('author').value,
+                email: document.getElementById('email').value,
+                base_url: document.getElementById('base_url').value,
+                audio_dir: document.getElementById('audio_dir').value,
+                image_url: document.getElementById('image_url').value
+            };
+
+            try {
+                const response = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newConfig)
+                });
+
+                if (response.ok) {
+                    config = newConfig;
+                    updateFeedUrl();
+                    showSuccess('settings', 'Settings saved successfully!');
+                    setTimeout(() => loadFiles(), 1000);
+                } else {
+                    showError('settings', 'Failed to save settings');
+                }
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                showError('settings', 'Failed to save settings');
+            }
+        });
+
+        function updateFeedUrl() {
+            const feedUrl = `${config.base_url}/feed.xml`;
+            document.getElementById('feed-url').value = feedUrl;
+        }
+
+        function copyFeedUrl() {
+            const input = document.getElementById('feed-url');
+            input.select();
+            document.execCommand('copy');
+
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = originalText, 2000);
+        }
+
+        function showSuccess(tab, message) {
+            const el = document.getElementById(`${tab}-success`);
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3000);
+        }
+
+        function showError(tab, message) {
+            const el = document.getElementById(`${tab}-error`);
+            el.textContent = message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+
+</html>

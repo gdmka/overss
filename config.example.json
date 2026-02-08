@@ -1,0 +1,11 @@
+{
+    "port": ":8083",
+    "base_url": "http://localhost:8083",
+    "audio_dir": "./audiobooks",
+    "title": "My Audiobook Feed",
+    "description": "Personal audiobook RSS feed for Overcast",
+    "author": "Your Name",
+    "email": "your@email.com",
+    "image_url": "https://example.com/cover.jpg",
+    "selected_files": []
+}
