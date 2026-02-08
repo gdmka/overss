@@ -11,11 +11,6 @@ This guide will walk you through setting up and using Overss to sync your audiob
 ./start.sh
 ```
 
-**On Windows:**
-```bash
-start.bat
-```
-
 **Or manually:**
 ```bash
 ./overss
@@ -69,10 +64,6 @@ ifconfig | grep "inet " | grep -v 127.0.0.1
 ip addr show | grep "inet " | grep -v 127.0.0.1
 ```
 
-**Windows:**
-```bash
-ipconfig
-```
 
 Look for your local IP address (usually starts with 192.168.x.x or 10.x.x.x)
 

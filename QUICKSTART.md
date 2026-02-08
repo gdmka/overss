@@ -9,10 +9,6 @@ Get your audiobooks on Overcast in 5 minutes!
 ./start.sh
 ```
 
-**Windows:**
-```bash
-start.bat
-```
 
 ## 2️⃣ Open Web Interface
 

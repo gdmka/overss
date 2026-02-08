@@ -1,16 +1,6 @@
 # 📚 Overss - RSS Feed Server for Audiobooks
 
-Overss is a lightweight Go-based RSS feed server that allows you to sync your audiobook collection to podcast apps like Overcast. It provides a beautiful web UI for managing your audiobook files and generates a podcast-compatible RSS feed.
-
-## ✨ Features
-
-- 🎵 **Multiple Audio Format Support**: MP3, M4A, M4B, OGG, OPUS, FLAC, WAV, AAC
-- 🖥️ **Beautiful Web UI**: Easy-to-use interface for file selection and configuration
-- 📡 **RSS 2.0 Feed**: Compatible with all major podcast apps (Overcast, Pocket Casts, etc.)
-- 📁 **Flexible Storage**: Works with local disk or network storage
-- ⚙️ **Configurable**: Customize feed metadata, directories, and URLs
-- 🚀 **Lightweight**: Single binary with no external dependencies
-- 🔄 **Real-time Updates**: Changes reflect immediately in your feed
+Overss is a lightweight Go-based RSS feed server that allows you to sync your audiobook collection to podcast apps like Overcast. It provides a  web UI for managing your audiobook files and generates a podcast-compatible RSS feed.
 
 ## 🚀 Quick Start
 
