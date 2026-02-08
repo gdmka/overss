@@ -26,6 +26,22 @@ fi
 echo "🌐 Starting local server and ngrok tunnel..."
 echo ""
 
+# Cleanup function to stop both processes
+cleanup() {
+    echo ""
+    echo "🛑 Stopping services..."
+    if [ ! -z "$SERVER_PID" ]; then
+        kill $SERVER_PID 2>/dev/null
+    fi
+    if [ ! -z "$NGROK_PID" ]; then
+        kill $NGROK_PID 2>/dev/null
+    fi
+    exit 0
+}
+
+# Set up trap to catch Ctrl+C and other termination signals
+trap cleanup SIGINT SIGTERM
+
 # Start the server in the background
 ./overss &
 SERVER_PID=$!
@@ -37,7 +53,11 @@ sleep 2
 if command -v ngrok &> /dev/null; then
     echo "🌍 Starting ngrok tunnel for internet access..."
     echo ""
-    ngrok http 8083
+    ngrok http 8083 &
+    NGROK_PID=$!
+
+    # Wait for both processes
+    wait $SERVER_PID $NGROK_PID
 else
     echo "⚠️  ngrok not found. Server running locally only."
     echo "📥 Install ngrok from: https://ngrok.com/download"
