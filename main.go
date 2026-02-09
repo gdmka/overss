@@ -246,8 +246,12 @@ func rssFeedHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Add selected files to feed
-	for _, relPath := range config.SelectedFiles {
+	// Add selected files to feed with sequential timestamps
+	// This ensures proper chronological order in podcast apps like Overcast
+	// Files are ordered from oldest to newest based on their position in SelectedFiles
+	baseTime := now.Add(-time.Duration(len(config.SelectedFiles)) * time.Hour)
+
+	for i, relPath := range config.SelectedFiles {
 		fullPath := filepath.Join(config.AudioDir, relPath)
 		info, err := os.Stat(fullPath)
 		if err != nil {
@@ -260,11 +264,15 @@ func rssFeedHandler(w http.ResponseWriter, r *http.Request) {
 		// Determine MIME type
 		mimeType := getMimeType(filepath.Ext(relPath))
 
+		// Generate sequential pubDate: each file is 1 hour newer than the previous
+		// This ensures files appear in the correct order in podcast apps
+		pubDate := baseTime.Add(time.Duration(i) * time.Hour)
+
 		item := &feeds.Item{
 			Title:       strings.TrimSuffix(filepath.Base(relPath), filepath.Ext(relPath)),
 			Link:        &feeds.Link{Href: enclosureURL},
 			Description: fmt.Sprintf("Audiobook: %s", filepath.Base(relPath)),
-			Created:     info.ModTime(),
+			Created:     pubDate,
 			Enclosure: &feeds.Enclosure{
 				Url:    enclosureURL,
 				Length: fmt.Sprintf("%d", info.Size()),
